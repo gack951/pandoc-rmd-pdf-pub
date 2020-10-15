@@ -1,5 +1,5 @@
 Remove-Item .\tex2pdf* -r -force
-$filename="PDF\Keitaro_Masters_thesis_"+$(Get-Date -Format yyyyMMdd_HHmmss)+".pdf"
+$filename="PDF\thesis_"+$(Get-Date -Format yyyyMMdd_HHmmss)+".pdf"
 # R Markdownを使わない場合はコメントアウト
 Rscript -e "knitr::knit('thesis.Rmd')"
 # Rmdのコードブロックにラベルを付ける。***を\clearpageに置換する。

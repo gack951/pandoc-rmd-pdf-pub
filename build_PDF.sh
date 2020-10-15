@@ -1,5 +1,5 @@
 #!/usr/bin/zsh
-filename="PDF/Keitaro_Masters_thesis_"$(date "+%Y%m%d_%H%M%S")".pdf"
+filename="PDF/thesis_"$(date "+%Y%m%d_%H%M%S")".pdf"
 sed -r 's/^```(.+)/```{\1}/' thesis.Rmd > thesis.tmp.Rmd
 ret=$(Rscript -e "knitr::knit('thesis.tmp.Rmd')" 2>&1) || { echo $ret; exit 1; }
 sed -e '/^\!/N;s/\n:{/{/g' -e 's/\*\{3,\}/\\clearpage/g' thesis.tmp.md > thesis.md
