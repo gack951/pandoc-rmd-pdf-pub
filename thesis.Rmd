@@ -1,0 +1,117 @@
+---
+#documentclass: ltjsbook
+documentclass: ltjsreport
+classoption: 11pt,a4j,openany
+geometry: twoside,top=15truemm,bottom=25truemm,inner=35truemm,outer=20truemm
+indent: 1
+figureTitle: "図 "
+tableTitle: "表 "
+figPrefix: "図 "
+eqnPrefix: "式 "
+tblPrefix: "表 "
+secPrefix: ""
+csl: american-chemical-society.csl
+bibliography: [thesis.bib]
+mainfont: Times New Roman
+header-includes:
+	- \usepackage[morisawa-pr6n]{luatexja-preset}
+	- \renewcommand{\headfont}{\mcfamily\rmfamily}
+---
+```r setup, include=FALSE
+options(scipen=100)
+knitr::opts_chunk$set(echo = FALSE, eval = TRUE, warning = FALSE, error = FALSE, message = FALSE)
+knitr::opts_chunk$set(dev = "pdf", dev.args = list(family = "Helvetica")) # familyをJapan1(HeiMin, Ryumin)とすれば小塚明朝、Japan1GothicBBBとすれば小塚ゴシックになる。
+knitr::opts_chunk$set(fig.width = 8, fig.height = 6)
+Sys.setenv(tz="asia/tokyo")
+```
+```python
+import datetime
+start_datetime=datetime.datetime.now()
+```
+\addtocounter{page}{-2}
+<!-- PDF用メタデータおよびタイトルページ -->
+\hypersetup{pdftitle={pandoc+LuaLaTeXでR MarkdownからPDF作成}, pdfauthor={gack951}}
+\title{\huge pandoc+LuaLaTeXでR MarkdownからPDF作成 \vspace{13cm}}
+\author{\Large gack951 \vspace{2mm} \\ \Large 2020}
+\maketitle
+\thispagestyle{empty}
+
+\tableofcontents
+\thispagestyle{empty}
+
+# 略語表 {-}
+|  略語  |        名称        |     訳語     |
+| ------ | ------------------ | ------------ |
+| md     | Markdown           | マークダウン |
+| VSCode | Visual Studio Code |              |
+
+***
+# pandocのサンプル {#sec:pandoc}
+## pandoc markdownの一般的表記法と独自の表記 {#sec:pandoc-original}
+強調は次の通り。_斜体 アンダーバー_ __太字 アンダーバー2つ__
+
+表は[@tbl:b]のように記述する。列ごとに揃え方を指定できる。また参考文献は事前にBibTeXファイルに出力しておき、このように参照する[@gonzalez-acuna_general_2018; @arute_quantum_2019]。
+
+章や節番号を参照したいときは予めラベルを付けておく。この章は第[@sec:pandoc]章、この節は第[@sec:pandoc-tables]節。
+
+| 項目  |  数値1   |   数値2    |   数値3   |
+| ----- | :------- | :--------: | --------: |
+| 項目1 | $1$      |   $0.2$    |      $-3$ |
+| 項目2 | $456$    |  $0.789$   |   $-1011$ |
+| 項目3 | $121314$ | $0.151617$ | $-181920$ |
+:何らかの表 {#tbl:b}
+
+以下はpandocの仕様ではなく、build_PDF.shの中で行う処理により実現されている。
+
+- 行頭アスタリスク3つ以上で水平線の代わりに改ページを行う
+- コードブロック先頭行の波括弧を省略できる(VSCodeでシンタックスハイライトされる)
+- コードブロックで作成した画像にも参照ラベルが付けられる
+
+***
+## 画像の挿入 {#sec:pandoc-images}
+画像は以下のように挿入する。ローカルのパスでもインターネット上のURLでも指定できる。また図の相互参照はこのようにする([@fig:a])。これは図の後ろに書いたラベルと対応している。
+
+![序論の概念図](https://placekitten.com/800/600){#fig:a width=75%}
+
+
+R Markdownを使用して[@fig:r]のようにグラフを埋め込むことも出来る。
+
+```r Rmd_plot, fig.cap="日本語キャプション"
+abs <- read.table("data/data1.txt", skip=1)
+em <- read.table("data/data2.txt", skip=9)
+par(mai=c(1,1,1,1))
+plot(abs, type="l", lwd=2, xlab="x", ylab="y1", col="cyan", xlim=c(0,10), ylim=c(0,100))
+par(new=T)
+plot(em, type="l", lwd=2, axes=FALSE, xlab="", ylab="", col="red", xlim=c(0,10), ylim=c(0,100))
+axis(4)
+mtext("y2", side=4, line=2)
+```
+:{#fig:r width=100%}
+
+```r r_sdgs, fig.cap="円グラフの例"
+par(lwd=8)
+pie(rep(1,17),clockwise = T,border = "white",col=c("#E4002B","#D29F13","#309B42","#BA0C2F","#F93822","#00AFD7","#FFB81C","#8A1538","#FF6A14","#DA1984","#FF9E1B","#CC8A00","#4A783C","#007DBA","#43B02A","#00558C","#002F6C"),labels="")
+par(new=T)
+pie(1,radius=0.4,col="white",border = "white",labels = "")
+```
+:{#fig:r_sdgs width=50%}
+
+ベクタ画像を埋め込むときはPDF([@fig:SDGs])がベスト。
+
+![SDGsロゴ](figure/SDGs.pdf){#fig:SDGs width=75%}
+
+***
+## Pythonの実行 {#sec:pandoc-python}
+別のコードブロックのオブジェクトも参照できる。
+
+```python python-block-test
+print("実行日時: "+start_datetime.strftime('%Y%m%d-%H%M%S'))
+```
+
+***
+# 謝辞 {-}
+感謝の気持ち。
+
+***
+# 参考文献 {-}
+\parindent = 5pt
